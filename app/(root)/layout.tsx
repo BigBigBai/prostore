@@ -1,29 +1,17 @@
-import type { Metadata } from 'next';
+import Header from '@/components/shared/header';
+import Footer from '@/components/footer';
 import localFont from 'next/font/local';
-import '@/assets/styles/globals.css';
-import { APP_DESCRIPTION, APP_NAME, SERVER_URL } from '@/lib/constants';
 
 const geistSans = localFont({
-  src: './fonts/GeistVF.woff',
+  src: '../fonts/GeistVF.woff',
   variable: '--font-geist-sans',
   weight: '100 900',
 });
 const geistMono = localFont({
-  src: './fonts/GeistMonoVF.woff',
+  src: '../fonts/GeistMonoVF.woff',
   variable: '--font-geist-mono',
   weight: '100 900',
 });
-
-export const metadata: Metadata = {
-  // title: 'Prostore',
-  // description: 'A modern store built with Next.js',
-  title: {
-    template: `%s | ${APP_NAME}`,
-    default: APP_NAME,
-  },
-  description: APP_DESCRIPTION,
-  metadataBase: new URL(SERVER_URL),
-};
 
 export default function RootLayout({
   children,
@@ -35,7 +23,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <div className='flex h-screen flex-col'>
+          <Header />
+          <main className='flex-1 wrapper'>{children}</main>
+          <Footer />
+        </div>
       </body>
     </html>
   );
