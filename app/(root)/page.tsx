@@ -1,7 +1,9 @@
-import { Button } from '@/components/ui/button';
+// const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const Homepage = () => {
-  return <Button>Latest</Button>;
+  // await delay(2000);
+
+  return <>ProStore</>;
 };
 
 export default Homepage;
