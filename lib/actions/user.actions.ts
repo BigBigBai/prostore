@@ -9,11 +9,13 @@ export async function signInWithCredentials(
   formData: FormData
 ) {
   try {
+    // Parse and validate form inputs
     const user = signInFormSchema.parse({
       email: formData.get('email'),
-      passowrd: formData.get('passowrd'),
+      password: formData.get('password'),
     });
 
+    // Trigger NextAuth credentials sign-in and redirect to home on success
     await signIn('credentials', user);
 
     return { success: true, message: 'Signed in successfully' };
@@ -22,12 +24,10 @@ export async function signInWithCredentials(
       throw error;
     }
 
-    return { success: false, message: 'Invalid email or passowrd' };
+    return { success: false, message: 'Invalid email or password' };
   }
 }
 
 export async function signOutUser() {
   await signOut();
 }
-
-
