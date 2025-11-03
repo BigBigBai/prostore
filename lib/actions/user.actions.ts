@@ -5,6 +5,8 @@ import { signIn, signOut } from '@/auth';
 import { signInFormSchema, signUpFormSchema } from '../validator';
 import { hashSync } from 'bcrypt-ts-edge';
 import { prisma } from '@/db/prisma';
+// import { ZodError, z } from 'zod';
+import { formatError } from '../utils';
 
 export async function signInWithCredentials(
   prevState: unknown,
@@ -61,10 +63,21 @@ export async function signUp(prevState: unknown, formData: FormData) {
 
     return { success: true, message: 'User created successfully' };
   } catch (error) {
+    // if (error instanceof ZodError) {
+    //   const treeZodError = z.treeifyError(error);
+    //   const prettyZodError = z.prettifyError(error);
+    //   console.log(treeZodError);
+    //   console.log(prettyZodError);
+    // }
+    console.log(error.name);
+    console.log(error.code);
+    console.log(error.errors);
+    console.log(error.meta?.target);
+
     if (isRedirectError(error)) {
       throw error;
     }
 
-    return { success: false, message: 'Something went wrong' };
+    return { success: false, message: formatError(error) };
   }
 }
