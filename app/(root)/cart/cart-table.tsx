@@ -20,6 +20,8 @@ import {
   TableRow,
 } from '@/components/ui/table';
 
+import { formatCurrency } from '@/lib/utils';
+
 function AddButton({ item }: { item: CartItem }) {
   // const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
@@ -140,6 +142,28 @@ const CartTable = ({ cart }: { cart?: Cart }) => {
             </TableBody>
           </Table>
         </div>
+        <Card>
+          <CardContent className='p-4   gap-4'>
+            <div className='pb-3 text-xl'>
+              Subtotal ({cart.items.reduce((a, c) => a + c.qty, 0)}):
+              {formatCurrency(cart.itemsPrice)}
+            </div>
+            <Button
+              onClick={() =>
+                startTransition(() => router.push('/shipping-address'))
+              }
+              className='w-full'
+              disabled={isPending}
+            >
+              {isPending ? (
+                <Loader className='animate-spin w-4 h-4' />
+              ) : (
+                <ArrowRight className='w-4 h-4' />
+              )}
+              Proceed to Checkout
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     </>
   );
