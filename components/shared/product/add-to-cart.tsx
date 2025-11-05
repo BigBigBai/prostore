@@ -18,7 +18,6 @@ const AddToCart = ({ item }: { item: Omit<CartItem, 'cartId'> }) => {
     const res = await addItemToCart(item);
 
     if (!res.success) {
-      console.log(23);
       toast.error(res.message);
       return;
     }
