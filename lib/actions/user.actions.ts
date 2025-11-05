@@ -7,6 +7,9 @@ import { hashSync } from 'bcrypt-ts-edge';
 import { prisma } from '@/db/prisma';
 // import { ZodError, z } from 'zod';
 import { formatError } from '../utils';
+import { auth } from '@/auth';
+import { shippingAddressSchema } from '../validator';
+import { ShippingAddress } from '@/types';
 
 export async function signInWithCredentials(
   prevState: unknown,
@@ -90,4 +93,30 @@ export async function getUserById(userId: string) {
 
   if (!user) throw new Error('User not found');
   return user;
+}
+
+// Update user's address
+export async function updateUserAddress(data: ShippingAddress) {
+  try {
+    const session = await auth();
+
+    const currentUser = await prisma.user.findFirst({
+      where: { id: session?.user?.id! },
+    });
+    if (!currentUser) throw new Error('User not found');
+
+    const address = shippingAddressSchema.parse(data);
+
+    await prisma.user.update({
+      where: { id: currentUser.id },
+      data: { address },
+    });
+
+    return {
+      success: true,
+      message: 'User updated successfully',
+    };
+  } catch (error) {
+    return { success: false, message: formatError(error) };
+  }
 }

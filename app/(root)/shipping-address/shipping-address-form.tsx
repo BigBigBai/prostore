@@ -11,7 +11,6 @@ import { shippingAddressDefaultValues } from '@/lib/constants';
 // import { useToast } from '@/hooks/use-toast';
 import { toast } from 'sonner';
 import { useTransition } from 'react';
-import { updateUserAddress } from '@/lib/actions/user.actions';
 import CheckoutSteps from '@/components/shared/checkout-steps';
 import {
   Form,
@@ -24,6 +23,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Loader } from 'lucide-react';
+import { updateUserAddress } from '@/lib/actions/user.actions';
 
 const ShippingAddressForm = ({
   address,
@@ -40,6 +40,21 @@ const ShippingAddressForm = ({
 
   const [isPending, startTransition] = useTransition();
 
+  const onSubmit: SubmitHandler<z.infer<typeof shippingAddressSchema>> = async (
+    values
+  ) => {
+    startTransition(async () => {
+      const res = await updateUserAddress(values);
+
+      if (!res.success) {
+        toast.error(res.message);
+        return;
+      }
+
+      router.push('/payment-method');
+    });
+  };
+
   return (
     <>
       <div className='max-w-md mx-auto space-y-4'>
@@ -51,7 +66,7 @@ const ShippingAddressForm = ({
           <form
             method='post'
             className='space-y-4'
-            // onSubmit={form.handleSubmit(onSubmit)}
+            onSubmit={form.handleSubmit(onSubmit)}
           >
             <div className='flex flex-col md:flex-row gap-5'>
               <FormField
