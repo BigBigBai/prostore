@@ -1,5 +1,5 @@
 import { compareSync } from 'bcrypt-ts-edge';
-import type { NextAuthConfig } from 'next-auth';
+// import type { NextAuthConfig } from 'next-auth';
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 
@@ -56,6 +56,7 @@ export const config = {
   ],
   callbacks: {
     ...authConfig.callbacks,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async session({ session, user, trigger, token }: any) {
       session.user.id = token.sub;
       session.user.name = token.name;
@@ -85,32 +86,39 @@ export const config = {
     //   }
     //   return token;
     // },
-    async jwt({ token, user, trigger, session }: any) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    async jwt({ token, user, trigger }: any) {
       if (user) {
         // Assign user properties to the token
         token.id = user.id;
         token.role = user.role;
 
         if (trigger === 'signIn' || trigger === 'signUp') {
-          const cookiesObject = await cookies();
-          const sessionCartId = cookiesObject.get('sessionCartId')?.value;
+          // cookies() from next/headers is only available on the server.
+          // When this callback is executed in a browser/action context it will throw,
+          // so only import and call it on the server (node) environment.
+          if (typeof window === 'undefined') {
+            const { cookies } = await import('next/headers');
+            const cookiesObject = await cookies();
+            const sessionCartId = cookiesObject.get('sessionCartId')?.value;
 
-          if (sessionCartId) {
-            const sessionCart = await prisma.cart.findFirst({
-              where: { sessionCartId },
-            });
-
-            if (sessionCart) {
-              // Overwrite any existing user cart
-              await prisma.cart.deleteMany({
-                where: { userId: user.id },
+            if (sessionCartId) {
+              const sessionCart = await prisma.cart.findFirst({
+                where: { sessionCartId },
               });
 
-              // Assign the guest cart to the logged-in user
-              await prisma.cart.update({
-                where: { id: sessionCart.id },
-                data: { userId: user.id },
-              });
+              if (sessionCart) {
+                // Overwrite any existing user cart
+                await prisma.cart.deleteMany({
+                  where: { userId: user.id },
+                });
+
+                // Assign the guest cart to the logged-in user
+                await prisma.cart.update({
+                  where: { id: sessionCart.id },
+                  data: { userId: user.id },
+                });
+              }
             }
           }
         }
