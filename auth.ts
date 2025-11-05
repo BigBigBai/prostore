@@ -108,16 +108,22 @@ export const config = {
               });
 
               if (sessionCart) {
-                // Overwrite any existing user cart
+                // Overwrite any existing user cart except the sessionCart itself
                 await prisma.cart.deleteMany({
-                  where: { userId: user.id },
+                  where: { userId: user.id, id: { not: sessionCart.id } },
                 });
 
-                // Assign the guest cart to the logged-in user
-                await prisma.cart.update({
+                // Confirm sessionCart still exists before update
+                const stillExists = await prisma.cart.findUnique({
                   where: { id: sessionCart.id },
-                  data: { userId: user.id },
                 });
+                if (stillExists) {
+                  // Assign the guest cart to the logged-in user
+                  await prisma.cart.update({
+                    where: { id: sessionCart.id },
+                    data: { userId: user.id },
+                  });
+                }
               }
             }
           }
