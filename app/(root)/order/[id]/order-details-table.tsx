@@ -11,7 +11,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 // import { useToast } from '@/hooks/use-toast';
-import toast from 'sonner';
+import { toast } from 'sonner';
 import { formatCurrency, formatDateTime, formatId } from '@/lib/utils';
 import { Order } from '@/types';
 import Image from 'next/image';
