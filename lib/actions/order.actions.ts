@@ -104,16 +104,24 @@ export const createOrder = async () => {
 };
 
 export async function getOrderById(orderId: string) {
-  const data = await prisma.order.findFirst({
-    where: {
-      id: orderId,
-    },
-    include: {
-      orderItems: true,
-      user: { select: { name: true, email: true } },
-    },
-  });
-  return convertToPlainObject(data);
+  try {
+    const data = await prisma.order.findFirst({
+      where: {
+        id: orderId,
+      },
+      include: {
+        orderItems: true,
+        user: { select: { name: true, email: true } },
+      },
+    });
+    return convertToPlainObject(data);
+  } catch (err) {
+    // Normalize and log unexpected errors to avoid Next.js internal opaque errors
+    // eslint-disable-next-line no-console
+    console.error('Error in getOrderById:', err);
+    if (err instanceof Error) throw err;
+    throw new Error(JSON.stringify(err));
+  }
 }
 
 // Create a Paypal Order
@@ -218,7 +226,7 @@ async function updateOrderToPaid({
       id: orderId,
     },
     include: {
-      orderitems: true,
+      orderItems: true,
     },
   });
 
@@ -229,7 +237,7 @@ async function updateOrderToPaid({
   // Transaction to update the order and update the product quantities
   await prisma.$transaction(async (tx) => {
     // Update all item quantities in the database
-    for (const item of order.orderitems) {
+    for (const item of order.orderItems) {
       await tx.product.update({
         where: { id: item.productId },
         data: { stock: { increment: -item.qty } },
@@ -253,7 +261,7 @@ async function updateOrderToPaid({
       id: orderId,
     },
     include: {
-      orderitems: true,
+      orderItems: true,
       user: { select: { name: true, email: true } },
     },
   });

@@ -19,13 +19,25 @@ const OrderDetailsPage = async (props: {
   const order = await getOrderById(id);
   if (!order) notFound();
 
+  // Defensive: ensure order is a plain object and log if something unexpected is returned
+  try {
+    if (typeof order !== 'object' || order === null) {
+      throw new Error('Invalid order data');
+    }
+  } catch (err) {
+    // Log normalized error on the server for debugging
+    // eslint-disable-next-line no-console
+    console.error('Error while preparing order page:', err);
+    throw err;
+  }
+
   return (
     <OrderDetailsTable
       order={{
         ...order,
         shippingAddress: order.shippingAddress as ShippingAddress,
       }}
-      paypalCliientId={process.env.PAYPAL_CLIENT_ID || 'sb'}
+      paypalClientId={process.env.PAYPAL_CLIENT_ID || 'sb'}
     />
   );
 };
