@@ -24,9 +24,7 @@ const OrdersPage = async (props: {
     page: Number(page) || 1,
   });
 
-  console.log(orders);
-
-  
+  //   console.log(orders);
 
   return (
     <div className='space-y-2'>
