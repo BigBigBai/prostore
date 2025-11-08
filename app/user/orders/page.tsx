@@ -10,6 +10,7 @@ import { getMyOrders } from '@/lib/actions/order.actions';
 import { formatCurrency, formatDateTime, formatId } from '@/lib/utils';
 import { Metadata } from 'next';
 import Link from 'next/link';
+import Pagination from '@/components/shared/pagination';
 
 export const metadata: Metadata = {
   title: 'My Orders',
@@ -24,6 +25,8 @@ const OrdersPage = async (props: {
   });
 
   console.log(orders);
+
+  
 
   return (
     <div className='space-y-2'>
@@ -65,6 +68,12 @@ const OrdersPage = async (props: {
             ))}
           </TableBody>
         </Table>
+        {orders.totalPages > 1 && (
+          <Pagination
+            page={Number(page) || 1}
+            totalPages={orders?.totalPages}
+          />
+        )}
       </div>
     </div>
   );
