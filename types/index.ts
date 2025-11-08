@@ -3,6 +3,7 @@ import { insertProductSchema } from '@/lib/validator';
 import { cartItemSchema, insertCartSchema } from '@/lib/validator';
 import { shippingAddressSchema } from '@/lib/validator';
 import { insertOrderSchema, insertOrderItemSchema } from '@/lib/validator';
+import { paymentResultShcema } from '@/lib/validator';
 
 export type Product = z.infer<typeof insertProductSchema> & {
   id: string;
@@ -25,3 +26,6 @@ export type Order = z.infer<typeof insertOrderSchema> & {
   orderItems: OrderItem[];
   user: { name: string; email: string };
 };
+
+export type PaymentResult = z.infer<typeof paymentResultShcema>;
+
