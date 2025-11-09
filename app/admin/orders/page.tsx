@@ -14,6 +14,8 @@ import { formatCurrency, formatDateTime, formatId } from '@/lib/utils';
 import Link from 'next/link';
 import Pagination from '@/components/shared/pagination';
 import { Button } from '@/components/ui/button';
+import { deleteOrder } from '@/lib/actions/order.actions';
+import DeleteDialog from '@/components/shared/delete-dialog';
 
 export const metadata: Metadata = {
   title: 'Admin Orders',
@@ -72,7 +74,8 @@ const OrdersPage = async (props: {
                   <Button asChild variant='outline' size='sm'>
                     <Link href={`/order/${order.id}`}>Details</Link>
                   </Button>
-                  {/* DELETE */}
+
+                  <DeleteDialog id={order.id} action={deleteOrder} />
                 </TableCell>
               </TableRow>
             ))}
