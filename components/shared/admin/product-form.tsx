@@ -48,9 +48,57 @@ const ProductForm = ({
       product && type === 'Update' ? product : productDefaultValues,
   });
 
+  // Handle form submit
+  const onSubmit: SubmitHandler<z.infer<typeof insertProductSchema>> = async (
+    values
+  ) => {
+    if (type === 'Create') {
+      const res = await createProduct(values);
+
+      if (!res.success) {
+        // toast({
+        //   variant: 'destructive',
+        //   description: res.message,
+        // });
+
+        toast.error(res.message);
+      } else {
+        // toast({
+        //   description: res.message,
+        // });
+
+        toast.success(res.message);
+        router.push(`/admin/products`);
+      }
+    }
+    if (type === 'Update') {
+      if (!productId) {
+        router.push(`/admin/products`);
+        return;
+      }
+
+      const res = await updateProduct({ ...values, id: productId });
+
+      if (!res.success) {
+        // toast({
+        //   variant: 'destructive',
+        //   description: res.message,
+        // });
+
+        toast.error(res.message);
+      } else {
+        router.push(`/admin/products`);
+      }
+    }
+  };
+
   return (
     <Form {...form}>
-      <form className='space-y-8'>
+      <form
+        method='post'
+        className='space-y-8'
+        onSubmit={form.handleSubmit(onSubmit)}
+      >
         <div className='flex flex-col gap-5 md:flex-row'>
           {/* Name */}
           <FormField
