@@ -43,7 +43,9 @@ const AdminOverviewPage = async () => {
           </CardHeader>
           <CardContent>
             <div className='text-2xl font-bold'>
-              {formatCurrency(summary.totalSales._sum.totalPrice!.toString())}
+              {formatCurrency(
+                summary.totalSales._sum.totalPrice?.toString() || '0'
+              )}
             </div>
           </CardContent>
         </Card>
@@ -83,7 +85,7 @@ const AdminOverviewPage = async () => {
             <CardTitle>Overview</CardTitle>
           </CardHeader>
           <CardContent className='pl-2'>
-            <Charts data={{salesData: summary.salesData}} />
+            <Charts data={{ salesData: summary.salesData }} />
           </CardContent>
         </Card>
         <Card className='col-span-3'>
@@ -109,7 +111,9 @@ const AdminOverviewPage = async () => {
                     <TableCell>
                       {formatDateTime(order.createdAt).dateOnly}
                     </TableCell>
-                    <TableCell>{formatCurrency(order.totalPrice)}</TableCell>
+                    <TableCell>
+                      {formatCurrency(order.totalPrice.toString())}
+                    </TableCell>
                     <TableCell>
                       <Link href={`/order/${order.id}`}>
                         <span className='px-2'>Details</span>
