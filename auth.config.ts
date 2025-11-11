@@ -21,7 +21,7 @@ export const authConfig = {
 
       // Check if user is not authenticated and accessing a protected path
       if (!auth && protectedPaths.some((p) => p.test(pathname))) {
-        console.log(12345);
+        // console.log(12345);
         // return false;
         const url = new URL(
           `/sign-in?callbackUrl=${encodeURIComponent(request.nextUrl.href)}`,

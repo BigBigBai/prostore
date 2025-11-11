@@ -78,10 +78,10 @@ export async function signUp(prevState: unknown, formData: FormData) {
     //   console.log(treeZodError);
     //   console.log(prettyZodError);
     // }
-    console.log(error.name);
-    console.log(error.code);
-    console.log(error.errors);
-    console.log(error.meta?.target);
+    // console.log(error.name);
+    // console.log(error.code);
+    // console.log(error.errors);
+    // console.log(error.meta?.target);
 
     if (isRedirectError(error)) {
       throw error;

@@ -9,6 +9,7 @@ import { insertProductSchema, updateProductSchema } from '../validator';
 import { formatError } from '../utils';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
+import { Prisma } from '@prisma/client';
 
 
 export async function getLatestProducts() {
@@ -75,16 +76,16 @@ export async function getAllProducts({
   sort?: string;
 }) {
   // Query filter
-  // Query filter
-  const queryFilter: any =
+  const queryFilter: Prisma.ProductWhereInput =
     query && query !== 'all'
       ? {
           name: {
             contains: query,
             mode: 'insensitive',
-          },
+          } as Prisma.StringFilter,
         }
       : {};
+
   // Category filter
   const categoryFilter = category && category !== 'all' ? { category } : {};
 

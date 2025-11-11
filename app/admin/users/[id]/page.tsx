@@ -18,7 +18,7 @@ const UpdateUserPage = async (props: {
 
   if (!user) notFound();
 
-  console.log(user);
+//   console.log(user);
 
   return (
   <div className='space-y-8 max-w-lg mx-auto'>

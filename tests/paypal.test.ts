@@ -11,11 +11,11 @@ test('generates a PayPal access token', async () => {
 
 // Create a PayPal order
 test('creates a PayPal order', async () => {
-  const token = await generateAccessToken();
+  await generateAccessToken();
   const price = 10.0; // Example price for testing
 
   const orderResponse = await paypal.createOrder(price);
-  console.log(orderResponse);
+  // console.log(orderResponse);
 
   // Ensure the order response contains expected fields
   expect(orderResponse).toHaveProperty('id');
