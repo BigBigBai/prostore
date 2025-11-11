@@ -13,6 +13,7 @@ import { revalidatePath } from 'next/cache';
 import { paypal } from '../paypal';
 import { PaymentResult } from '@/types';
 import { PAGE_SIZE } from '../constants';
+import { Prisma } from '@prisma/client';
 
 // Create Order
 export const createOrder = async () => {
@@ -347,27 +348,27 @@ export async function getOrderSummary() {
 }
 
 // Get All Orders (Admin)
-export async function getAllOrders({
-  limit = PAGE_SIZE,
-  page,
-}: {
-  limit?: number;
-  page: number;
-}) {
-  const data = await prisma.order.findMany({
-    orderBy: { createdAt: 'desc' },
-    take: limit,
-    skip: (page - 1) * limit,
-    include: { user: { select: { name: true } } },
-  });
+// export async function getAllOrders({
+//   limit = PAGE_SIZE,
+//   page,
+// }: {
+//   limit?: number;
+//   page: number;
+// }) {
+//   const data = await prisma.order.findMany({
+//     orderBy: { createdAt: 'desc' },
+//     take: limit,
+//     skip: (page - 1) * limit,
+//     include: { user: { select: { name: true } } },
+//   });
 
-  const dataCount = await prisma.order.count();
+//   const dataCount = await prisma.order.count();
 
-  return {
-    data,
-    totalPages: Math.ceil(dataCount / limit),
-  };
-}
+//   return {
+//     data,
+//     totalPages: Math.ceil(dataCount / limit),
+//   };
+// }
 
 // Delete Order
 export async function deleteOrder(id: string) {
@@ -421,4 +422,44 @@ export async function deliverOrder(orderId: string) {
   } catch (err) {
     return { success: false, message: formatError(err) };
   }
+}
+
+// Get all orders
+export async function getAllOrders({
+  limit = PAGE_SIZE,
+  page,
+  query,
+}: {
+  limit?: number;
+  page: number;
+  query: string;
+}) {
+  const queryFilter: Prisma.OrderWhereInput =
+    query && query !== 'all'
+      ? {
+          user: {
+            name: {
+              contains: query,
+              mode: 'insensitive',
+            } as Prisma.StringFilter,
+          },
+        }
+      : {};
+
+  const data = await prisma.order.findMany({
+    where: {
+      ...queryFilter,
+    },
+    orderBy: { createdAt: 'desc' },
+    take: limit,
+    skip: (page - 1) * limit,
+    include: { user: { select: { name: true } } },
+  });
+
+  const dataCount = await prisma.order.count();
+
+  return {
+    data,
+    totalPages: Math.ceil(dataCount / limit),
+  };
 }
