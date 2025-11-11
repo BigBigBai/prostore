@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/table';
 import { formatId } from '@/lib/utils';
 import Link from 'next/link';
+import { deleteUser } from '@/lib/actions/user.actions';
 
 export const metadata: Metadata = {
   title: 'Admin Users',
@@ -57,7 +58,7 @@ const AdminUserPage = async (props: {
                   <Button asChild variant='outline' size='sm'>
                     <Link href={`/admin/users/${user.id}`}>Edit</Link>
                   </Button>
-                  {/* DELETE DIALOG HERE */}
+                  <DeleteDialog id={user.id} action={deleteUser} />
                 </TableCell>
               </TableRow>
             ))}
