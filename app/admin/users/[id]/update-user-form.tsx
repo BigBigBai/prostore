@@ -67,10 +67,12 @@ const UpdateUserForm = ({
       form.reset();
       router.push(`/admin/users`);
     } catch (error) {
-      toast({
-        variant: 'destructive',
-        description: (error as Error).message,
-      });
+      // toast({
+      //   variant: 'destructive',
+      //   description: (error as Error).message,
+      // });
+
+      toast.error((error as Error).message);
     }
   };
 

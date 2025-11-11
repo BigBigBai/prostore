@@ -39,6 +39,14 @@ const OrderDetailsPage = async (props: {
       order={{
         ...order,
         shippingAddress: order.shippingAddress as ShippingAddress,
+        itemsPrice: order.itemsPrice.toString(),
+        shippingPrice: order.shippingPrice.toString(),
+        taxPrice: order.taxPrice.toString(),
+        totalPrice: order.totalPrice.toString(),
+        orderItems: order.orderItems.map((item) => ({
+          ...item,
+          price: item.price.toString(),
+        })),
       }}
       paypalClientId={process.env.PAYPAL_CLIENT_ID || 'sb'}
       isAdmin={session?.user.role === 'admin' || false}

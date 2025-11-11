@@ -14,7 +14,7 @@ test('creates a PayPal order', async () => {
   await generateAccessToken();
   const price = 10.0; // Example price for testing
 
-  const orderResponse = await paypal.createOrder(price);
+  const orderResponse = await paypal.createOrder(price) as { id: string; status: string; [key: string]: any };
   // console.log(orderResponse);
 
   // Ensure the order response contains expected fields

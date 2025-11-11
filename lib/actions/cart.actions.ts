@@ -8,7 +8,6 @@ import { formatError } from '../utils';
 import { cartItemSchema, insertCartSchema } from '../validator';
 import { prisma } from '@/db/prisma';
 import { CartItem } from '@/types';
-import { Prisma } from '@prisma/client';
 import { round2 } from '../utils';
 import { convertToPlainObject } from '../utils';
 
@@ -103,7 +102,7 @@ export async function addItemToCart(data: CartItem) {
       await prisma.cart.update({
         where: { id: cart.id },
         data: {
-          items: cart.items as Prisma.CartUpdateitemsInput[],
+          items: cart.items,
           ...calcPrice(cart.items as CartItem[]),
         },
       });
@@ -192,7 +191,7 @@ export async function removeItemFromCart(productId: string) {
     await prisma.cart.update({
       where: { id: cart.id },
       data: {
-        items: cart.items as Prisma.CartUpdateitemsInput[],
+        items: cart.items,
         ...calcPrice(cart.items as CartItem[]),
       },
     });
