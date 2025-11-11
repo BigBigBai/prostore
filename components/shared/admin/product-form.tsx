@@ -42,10 +42,9 @@ const ProductForm = ({
   //   const { toast } = useToast();
 
   const form = useForm<z.infer<typeof insertProductSchema>>({
-    resolver:
-      type === 'Update'
-        ? zodResolver(updateProductSchema)
-        : zodResolver(insertProductSchema),
+    resolver: (type === 'Update'
+      ? zodResolver(updateProductSchema)
+      : zodResolver(insertProductSchema)) as any,
     defaultValues:
       product && type === 'Update' ? product : productDefaultValues,
   });

@@ -1,8 +1,8 @@
 import { Metadata } from 'next';
 import { getAllUsers } from '@/lib/actions/user.actions';
-import { requireAdmin } from '@/lib/auth-guard';
+// import { requireAdmin } from '@/lib/auth-guard';
 
-import { auth } from '@/auth';
+// import { auth } from '@/auth';
 import DeleteDialog from '@/components/shared/delete-dialog';
 import Pagination from '@/components/shared/pagination';
 import { Button } from '@/components/ui/button';

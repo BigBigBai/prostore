@@ -1,7 +1,7 @@
 import { getMyCart } from '@/lib/actions/cart.actions';
 import CartTable from './cart-table';
 
-import { useTransition } from 'react';
+// import { useTransition } from 'react';
 
 export const metadata = {
   title: 'Shipping Cart',
