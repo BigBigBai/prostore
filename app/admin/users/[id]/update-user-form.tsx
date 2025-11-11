@@ -18,6 +18,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 // import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { USER_ROLES } from '@/lib/constants';
 import { updateUserSchema } from '@/lib/validator';
 import { ControllerRenderProps } from 'react-hook-form';
@@ -25,6 +26,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { updateUser } from '@/lib/actions/user.actions';
 
 const UpdateUserForm = ({
   user,
@@ -39,105 +41,143 @@ const UpdateUserForm = ({
     defaultValues: user,
   });
 
+  // Handle submit
+  const onSubmit = async (values: z.infer<typeof updateUserSchema>) => {
+    try {
+      const res = await updateUser({
+        ...values,
+        id: user.id,
+      });
+
+      if (!res.success) {
+        // return toast({
+        //   variant: 'destructive',
+        //   description: res.message,
+        // });
+
+        return toast.error(res.message);
+      }
+
+      //   toast({
+      //     description: res.message,
+      //   });
+
+      toast.success(res.message);
+
+      form.reset();
+      router.push(`/admin/users`);
+    } catch (error) {
+      toast({
+        variant: 'destructive',
+        description: (error as Error).message,
+      });
+    }
+  };
+
   return (
     <Form {...form}>
-      <form className='space-y-4'>form</form>
-      {/* Email */}
-      <div>
-        <FormField
-          control={form.control}
-          name='email'
-          render={({
-            field,
-          }: {
-            field: ControllerRenderProps<
-              z.infer<typeof updateUserSchema>,
-              'email'
-            >;
-          }) => (
-            <FormItem className='w-full'>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input
-                  disabled={true}
-                  placeholder='Enter user email'
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-      </div>
-      {/* Name */}
-      <div>
-        <FormField
-          control={form.control}
-          name='name'
-          render={({
-            field,
-          }: {
-            field: ControllerRenderProps<
-              z.infer<typeof updateUserSchema>,
-              'name'
-            >;
-          }) => (
-            <FormItem className='w-full'>
-              <FormLabel>Name</FormLabel>
-              <FormControl>
-                <Input placeholder='Enter user name' {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-      </div>
-      {/* Role */}
-      <div>
-        <FormField
-          control={form.control}
-          name='role'
-          render={({
-            field,
-          }: {
-            field: ControllerRenderProps<
-              z.infer<typeof updateUserSchema>,
-              'role'
-            >;
-          }) => (
-            <FormItem className=' items-center'>
-              <FormLabel>Role</FormLabel>
-              <Select
-                onValueChange={field.onChange}
-                value={field.value.toString()}
-              >
+      <form
+        method='post'
+        onSubmit={form.handleSubmit(onSubmit)}
+        className='space-y-4'
+      >
+        {/* Email */}
+        <div>
+          <FormField
+            control={form.control}
+            name='email'
+            render={({
+              field,
+            }: {
+              field: ControllerRenderProps<
+                z.infer<typeof updateUserSchema>,
+                'email'
+              >;
+            }) => (
+              <FormItem className='w-full'>
+                <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder='Select a role' />
-                  </SelectTrigger>
+                  <Input
+                    disabled={true}
+                    placeholder='Enter user email'
+                    {...field}
+                  />
                 </FormControl>
-                <SelectContent>
-                  {USER_ROLES.map((role) => (
-                    <SelectItem key={role} value={role}>
-                      {role}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-      </div>
-      <div className='flex-between'>
-        <Button
-          type='submit'
-          className='w-full'
-          disabled={form.formState.isSubmitting}
-        >
-          {form.formState.isSubmitting ? 'Submitting...' : `Update User `}
-        </Button>
-      </div>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+        {/* Name */}
+        <div>
+          <FormField
+            control={form.control}
+            name='name'
+            render={({
+              field,
+            }: {
+              field: ControllerRenderProps<
+                z.infer<typeof updateUserSchema>,
+                'name'
+              >;
+            }) => (
+              <FormItem className='w-full'>
+                <FormLabel>Name</FormLabel>
+                <FormControl>
+                  <Input placeholder='Enter user name' {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+        {/* Role */}
+        <div>
+          <FormField
+            control={form.control}
+            name='role'
+            render={({
+              field,
+            }: {
+              field: ControllerRenderProps<
+                z.infer<typeof updateUserSchema>,
+                'role'
+              >;
+            }) => (
+              <FormItem className=' items-center'>
+                <FormLabel>Role</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  value={field.value.toString()}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder='Select a role' />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {USER_ROLES.map((role) => (
+                      <SelectItem key={role} value={role}>
+                        {role}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className='flex-between'>
+          <Button
+            type='submit'
+            className='w-full'
+            disabled={form.formState.isSubmitting}
+          >
+            {form.formState.isSubmitting ? 'Submitting...' : `Update User `}
+          </Button>
+        </div>
+      </form>
     </Form>
   );
 };
