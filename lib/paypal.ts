@@ -60,9 +60,9 @@ export async function generateAccessToken() {
   return jsonData.access_token;
 }
 
-async function handleResponse(response: any) {
+async function handleResponse<T = unknown>(response: Response): Promise<T> {
   if (response.status === 200 || response.status === 201) {
-    return response.json();
+    return response.json() as Promise<T>;
   }
   const errorMessage = await response.text();
   throw new Error(errorMessage);

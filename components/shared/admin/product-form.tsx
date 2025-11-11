@@ -14,7 +14,7 @@ import { toast } from 'sonner';
 import { createProduct, updateProduct } from '@/lib/actions/product.actions';
 import { productDefaultValues } from '@/lib/constants';
 import { insertProductSchema, updateProductSchema } from '@/lib/validator';
-import { ControllerRenderProps } from 'react-hook-form';
+import type { ControllerRenderProps, Resolver } from 'react-hook-form';
 import { Product } from '@/types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import slugify from 'slugify';
@@ -41,10 +41,14 @@ const ProductForm = ({
   const router = useRouter();
   //   const { toast } = useToast();
 
-  const form = useForm<z.infer<typeof insertProductSchema>>({
+  type FormValues =
+    | z.infer<typeof insertProductSchema>
+    | z.infer<typeof updateProductSchema>;
+
+  const form = useForm<FormValues>({
     resolver: (type === 'Update'
       ? zodResolver(updateProductSchema)
-      : zodResolver(insertProductSchema)) as any,
+      : zodResolver(insertProductSchema)) as Resolver<FormValues>,
     defaultValues:
       product && type === 'Update' ? product : productDefaultValues,
   });

@@ -106,8 +106,12 @@ export async function updateUserAddress(data: ShippingAddress) {
   try {
     const session = await auth();
 
+    if (!session?.user?.id) throw new Error('Not authenticated');
+
+    const userId = session.user.id;
+
     const currentUser = await prisma.user.findFirst({
-      where: { id: session?.user?.id! },
+      where: { id: userId },
     });
     if (!currentUser) throw new Error('User not found');
 
@@ -133,8 +137,11 @@ export async function updateUserPaymentMethod(
 ) {
   try {
     const session = await auth();
+    const userId = session?.user?.id;
+    if (!userId) throw new Error('Not authenticated');
+
     const currentUser = await prisma.user.findFirst({
-      where: { id: session?.user.id! },
+      where: { id: userId },
     });
     if (!currentUser) throw new Error('User not found');
 
