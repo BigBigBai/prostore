@@ -10,8 +10,7 @@ import { formatError } from '../utils';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 // import { Prisma } from '@prisma/client';
-import { Prisma } from '@/lib/generated/prisma/client';
-
+import { Prisma } from '@prisma/client';
 
 export async function getLatestProducts() {
   //   const prisma = new PrismaClient();

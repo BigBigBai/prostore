@@ -13,8 +13,7 @@ import { revalidatePath } from 'next/cache';
 import { paypal } from '../paypal';
 import { PaymentResult } from '@/types';
 import { PAGE_SIZE } from '../constants';
-// import { Prisma } from '@prisma/client';
-import { Prisma } from '@/lib/generated/prisma/client';
+import { Prisma } from '@prisma/client';
 
 // Create Order
 export const createOrder = async () => {
@@ -190,9 +189,9 @@ export async function approvePayPalOrder(
     if (!order) throw new Error('Order not found');
 
     // Check if the order is already paid
-    const captureData = (await paypal.capturePayment(data.orderID)) as
-      | PaymentResult
-      | null;
+    const captureData = (await paypal.capturePayment(
+      data.orderID
+    )) as PaymentResult | null;
     const paymentResult = order.paymentResult as PaymentResult | null;
     if (
       !captureData ||
@@ -448,9 +447,9 @@ export async function getAllOrders({
     query && query !== 'all'
       ? {
           user: {
-              name: {
-                contains: query,
-                mode: 'insensitive',
+            name: {
+              contains: query,
+              mode: 'insensitive',
             } as Prisma.StringFilter,
           },
         }
