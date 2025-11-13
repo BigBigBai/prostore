@@ -137,7 +137,13 @@ export async function createPayPalOrder(orderId: string) {
     });
     if (order) {
       // Create a paypal order
-      const paypalOrder = await paypal.createOrder(Number(order.totalPrice));
+      const paypalOrder = (await paypal.createOrder(
+        Number(order.totalPrice)
+      )) as { id: string } | null;
+
+      if (!paypalOrder || !paypalOrder.id) {
+        throw new Error('Invalid PayPal order');
+      }
 
       // Update the order with the paypal order id
       await prisma.order.update({
@@ -183,13 +189,17 @@ export async function approvePayPalOrder(
     if (!order) throw new Error('Order not found');
 
     // Check if the order is already paid
-    const captureData = await paypal.capturePayment(data.orderID);
+    const captureData = (await paypal.capturePayment(data.orderID)) as
+      | PaymentResult
+      | null;
+    const paymentResult = order.paymentResult as PaymentResult | null;
     if (
       !captureData ||
-      captureData.id !== (order.paymentResult as PaymentResult)?.id ||
+      captureData.id !== paymentResult?.id ||
       captureData.status !== 'COMPLETED'
-    )
+    ) {
       throw new Error('Error in paypal payment');
+    }
 
     // Update order to paid
     await updateOrderToPaid({
@@ -197,9 +207,8 @@ export async function approvePayPalOrder(
       paymentResult: {
         id: captureData.id,
         status: captureData.status,
-        email_address: captureData.payer.email_address,
-        pricePaid:
-          captureData.purchase_units[0]?.payments?.captures[0]?.amount?.value,
+        email_address: captureData.email_address ?? '',
+        pricePaid: captureData.pricePaid ?? '0',
       },
     });
 
@@ -320,7 +329,7 @@ export async function getOrderSummary() {
 
   // Get monthly sales
   const salesDataRaw = await prisma.$queryRaw<
-    Array<{ month: string; totalSales: Prisma.Decimal }>
+    Array<{ month: string; totalSales: unknown }>
   >`SELECT to_char("createdAt", 'MM/YY') as "month", sum("totalPrice") as "totalSales" FROM "Order" GROUP BY to_char("createdAt", 'MM/YY')`;
 
   const salesData: SalesDataType = salesDataRaw.map((entry) => ({

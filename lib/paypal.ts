@@ -56,7 +56,7 @@ export async function generateAccessToken() {
     },
   });
 
-  const jsonData = await handleResponse(response);
+  const jsonData = await handleResponse<{ access_token: string }>(response);
   return jsonData.access_token;
 }
 
