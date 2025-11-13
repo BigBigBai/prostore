@@ -11,6 +11,16 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  experimental: ({
+    outputFileTracingIncludes: {
+      '/**/*': [
+        './node_modules/.prisma/client/**',
+        './node_modules/@prisma/engines/**',
+        './lib/generated/prisma/client/**',
+      ],
+    },
+  } as any),
+  serverComponentsExternalPackages: ['@prisma/client', 'prisma'],
 };
 
 export default nextConfig;
