@@ -15,7 +15,8 @@ import { z } from 'zod';
 import { PAGE_SIZE } from '../constants';
 import { revalidatePath } from 'next/cache';
 import { updateUserSchema } from '../validator';
-import { Prisma } from '@prisma/client';
+// import { Prisma } from '@prisma/client';
+import { Prisma } from '@/lib/generated/prisma/client';
 
 export async function signInWithCredentials(
   prevState: unknown,
